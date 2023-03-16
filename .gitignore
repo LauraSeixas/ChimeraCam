@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Model related libraries
+opencv/
+age_detection/
+
+#remover imagens
+*.jpg
+*.jpeg
+*.webp
