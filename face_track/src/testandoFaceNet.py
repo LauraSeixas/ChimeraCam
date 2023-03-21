@@ -7,7 +7,7 @@ import tensorflow as tf
 model = FaceNet()
 
 # Carregar imagem
-img = cv2.imread('../test_imgs/bb_tres.jpg')
+img = cv2.imread('../test_imgs/test.jpeg')
 imagem = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 print(imagem.shape)
@@ -30,7 +30,7 @@ for face in faces:
     print(f'Face encontrada nas coordenadas ({x1}, {y1}), ({x2}, {y2})')
 
     # Mostrar as caixas delimitadoras das faces
-    cv2.rectangle(imagem, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    cv2.rectangle(imagem, (x1, y1), (x1 + x2, y1 + y2), (0, 255, 0), 2)
 
 cv2.imshow('Imagem com faces detectadas', imagem)
 cv2.waitKey(0)
