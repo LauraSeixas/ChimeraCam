@@ -5,9 +5,9 @@ import cv2
 import numpy as np
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QImage
-from face_track.src.imgProcess import ChimeraCam
+from face_track import FaceTrack
 
-chimera = ChimeraCam('age_net.caffemodel', 'age_deploy.prototxt')
+face_track = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
 
 Matrix = np.ndarray[int, np.dtype[np.generic]]
 
@@ -32,9 +32,8 @@ class VideoFaceTrack(QThread):
                 ret, frame = snapshotting.read()                
                 if ret:
                     frame: np.ndarray = self.set_new_frame_shape(frame, self.video_width)
-                    #frame_tr = np.asarray(frame, dtype=np.uint8)  O Qt não aceitou esse tipo
                     cv2_image: Matrix = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    cv2_tracked_image, face_data = chimera.process_img(cv2_image)
+                    cv2_tracked_image, face_data = face_track.process_img(cv2_image)
                     qt_image: QImage = self.qt_image_generator(cv2_tracked_image, self.video_width)
                     tracked_face_data: list = self.face_data_modeler(face_data)
                     self.emit_signals(qt_image, tracked_face_data)
@@ -66,6 +65,6 @@ class VideoFaceTrack(QThread):
         else:
             return ["Nenhuma pessoa detectada"]
     
-    def emit_signals(self, qt_image: QImage, face_data) -> None:
+    def emit_signals(self, qt_image: QImage, face_data: list) -> None:
         self.image_signal.emit(qt_image)
         self.face_data_signal.emit(face_data)

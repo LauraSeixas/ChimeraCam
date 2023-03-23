@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 from keras_facenet import FaceNet
 
-class ChimeraCam:
+class FaceTrack:
     _ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)',
            '(25-32)', '(38-43)', '(48-53)', '(60-100)']
     _model_mean = (78.4263377603, 83.7689143744, 114.895847746)

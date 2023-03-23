@@ -13,7 +13,7 @@ class ChimeraCam(QMainWindow):
         self.widgets_width: int = window_width
 
         # TELA DO VÍDEO
-        self.video_screen = QLabel()
+        self.video_screen: QLabel = QLabel()
         self.video_screen.setFixedSize(self.widgets_width, self.widgets_width)
         self.video_screen.setStyleSheet('QLabel {background-color: black}')
 

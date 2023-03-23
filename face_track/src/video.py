@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-from imgProcess import ChimeraCam
+from imgProcess import FaceTrack
 
-chimera = ChimeraCam('age_net.caffemodel', 'age_deploy.prototxt')
+chimera = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
 video = cv2.VideoCapture(0)
 
 while True:
