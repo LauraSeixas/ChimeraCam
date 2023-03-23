@@ -1,6 +1,6 @@
 import sys
-#from src.interface.main_window import MainWindow
-from src.interface.chimera_cam import ChimeraCam
+#from interface.main_window import MainWindow
+from interface.chimera_cam import ChimeraCam
 from PyQt5.QtWidgets import QApplication
     
 if __name__ == '__main__':
