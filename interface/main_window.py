@@ -1,9 +1,12 @@
+import sys
+from os.path import dirname
+sys.path.append(dirname(__file__))
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow
-from action_button import ActionButton
-from register_button import RegisterButton
-from alarm_button import AlarmButton
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QTableView, QWidget, QLabel
+from buttons.action_button import ActionButton
+from buttons.register_button import RegisterButton
+from buttons.alarm_button import AlarmButton
 
 class MainWindow(QMainWindow):
     def __init__(self):
