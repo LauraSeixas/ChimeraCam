@@ -1,14 +1,16 @@
+from os.path import dirname
 import cv2
 import numpy as np
 import tensorflow as tf
 from keras_facenet import FaceNet
+
 class ChimeraCam:
     _ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)',
            '(25-32)', '(38-43)', '(48-53)', '(60-100)']
     _model_mean = (78.4263377603, 83.7689143744, 114.895847746)
 
     def __init__(self, age_config, age_weights):
-        age_model_src = '../models/age_detection/'
+        age_model_src = f"{dirname(dirname(__file__))}/models/"
 
         age_config = age_model_src + age_config
         age_weights = age_model_src + age_weights

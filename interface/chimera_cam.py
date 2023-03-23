@@ -75,9 +75,9 @@ class ChimeraCam(QMainWindow):
     def refresh_video_screen(self, tracked_image: QImage) -> None:
         self.video_screen.setPixmap(QPixmap.fromImage(tracked_image))
 
-    def refresh_face_data_list(self, face_data: int) -> None:   # por enquanto, o face_data é um número inteiro
+    def refresh_face_data_list(self, face_data: list) -> None:
         self.list_tracked_face_data.clear()
-        self.list_tracked_face_data.addItem(str(face_data))
+        self.list_tracked_face_data.addItems(face_data)
     
     def CloseChimeraCam(self) -> None:
         self.close()
