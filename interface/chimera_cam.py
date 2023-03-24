@@ -1,4 +1,3 @@
-from PyQt5 import QtCore
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QListWidget
 from .video_face_track import VideoFaceTrack
@@ -33,7 +32,7 @@ class ChimeraCam(QMainWindow):
         self.layout_switch_button.addWidget(self.switcht_button)
         self.widget_switch_button: QWidget = QWidget()
         self.widget_switch_button.setLayout(self.layout_switch_button)
-        self.widget_switch_button.setGeometry(QtCore.QRect(0, 0, 100, 100))
+        self.widget_switch_button.setFixedSize(self.widgets_width, 65)
         self.widget_switch_button.setStyleSheet('QWidget {}')
 
         # LISTA A IDADE DAS PESSOAS RASTREADAS
@@ -71,7 +70,9 @@ class ChimeraCam(QMainWindow):
             self.face_tracking.image_signal.disconnect()
             self.face_tracking.face_data_signal.disconnect()
             self.switcht_button.setText('PLAY')
-
+            self.video_screen.setPixmap(QPixmap(""))
+            self.list_tracked_face_data.clear()
+            
     def refresh_video_screen(self, tracked_image: QImage) -> None:
         self.video_screen.setPixmap(QPixmap.fromImage(tracked_image))
 
