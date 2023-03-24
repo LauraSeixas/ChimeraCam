@@ -58,8 +58,19 @@ class VideoFaceTrack(QThread):
         if len(face_data) > 0:
             face_data_list: list = []
             for item in face_data:
-                person: str = item["age"].replace("(","").replace(")","")
-                face_data_str: str = f"Anônimo, idade: {person}"
+                age: str = item["age"].replace("(","").replace(")","").replace("-","")
+                match len(age):
+                    case 2:
+                        age: str = f"{age[0:1]} a {age[1:2]}"
+                    case 3:
+                        age: str = f"{age[0:1]} a {age[1:3]}"
+                    case 4:
+                        age: str = f"{age[0:2]} a {age[2:4]}"
+                    case 5:
+                        age: str = f"{age[0:2]} a {age[2:5]}"
+                    case _:
+                        pass
+                face_data_str: str = f"Anônimo, idade aprox. {age} anos"
                 face_data_list.append(face_data_str)
             return face_data_list
         else:

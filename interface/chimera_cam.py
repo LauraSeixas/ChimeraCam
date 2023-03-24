@@ -44,8 +44,8 @@ class ChimeraCam(QMainWindow):
         # BLOCO VERTICAL PRINCIPAL
         self.layout: QVBoxLayout = QVBoxLayout()
         self.layout.addWidget(self.video_screen)
-        self.layout.addWidget(self.list_tracked_face_data)
         self.layout.addWidget(self.widget_switch_button)
+        self.layout.addWidget(self.list_tracked_face_data)
 
         # CORPO DA JANELA CHIMERACAM
         self.body: QWidget = QWidget()
