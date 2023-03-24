@@ -8,3 +8,4 @@ if __name__ == '__main__':
     chimeracam_window: ChimeraCam = ChimeraCam(window_width)
     chimeracam_window.show()
     sys.exit(app.exec())
+    
