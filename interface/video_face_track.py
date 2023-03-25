@@ -7,7 +7,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QImage
 from face_track import FaceTrack
 
-Matrix = np.ndarray[int, np.dtype[np.generic]]
+Mat = np.ndarray[int, np.dtype[np.generic]]
 
 class VideoFaceTrack(QThread):
     image_signal: pyqtSignal = pyqtSignal(QImage)
@@ -32,7 +32,7 @@ class VideoFaceTrack(QThread):
                 ret, frame = snapshotting.read()                
                 if ret:
                     square_frame: np.ndarray = self.set_square_shape_frame(frame)
-                    cv2_image: Matrix = cv2.cvtColor(square_frame, cv2.COLOR_BGR2RGB)
+                    cv2_image: Mat = cv2.cvtColor(square_frame, cv2.COLOR_BGR2RGB)
                     cv2_tracked_image, face_data = self.face_track.process_img(cv2_image)
                     qt_image: QImage = self.qt_image_generator(cv2_tracked_image, self.video_width)
                     tracked_face_data: list = self.face_data_modeler(face_data)
@@ -55,7 +55,7 @@ class VideoFaceTrack(QThread):
             new_frame: np.ndarray = frame[start:end, :, :]
         return new_frame
     
-    def qt_image_generator(self, tracked_image: Matrix, video_width: int) -> QImage:
+    def qt_image_generator(self, tracked_image: Mat, video_width: int) -> QImage:
         qt_image: QImage = QImage(tracked_image.data, tracked_image.shape[1], tracked_image.shape[0], QImage.Format_RGB888)
         return qt_image.scaled(video_width, video_width, Qt.KeepAspectRatio)
     
