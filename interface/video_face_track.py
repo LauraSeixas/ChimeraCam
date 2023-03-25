@@ -15,7 +15,6 @@ class VideoFaceTrack(QThread):
 
     def __init__(self, widgets_width: int) -> None:
         super().__init__()
-        # LARGURA DO VÍDEO
         self.video_width: int = widgets_width
         self.face_track = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
 
