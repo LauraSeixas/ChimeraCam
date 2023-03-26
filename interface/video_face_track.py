@@ -49,9 +49,9 @@ class VideoFaceTrack(QThread):
             end: int = np.shape(frame)[1] - start
             new_frame: np.ndarray = frame[:, start:end, :]
         else:
-            start: int = (np.shape(frame)[0] - np.shape(frame)[1]) // 2
-            end: int = np.shape(frame)[0] - start
-            new_frame: np.ndarray = frame[start:end, :, :]
+            start = (np.shape(frame)[0] - np.shape(frame)[1]) // 2
+            end = np.shape(frame)[0] - start
+            new_frame = frame[start:end, :, :]
         return new_frame
     
     def qt_image_generator(self, tracked_image: Mat, video_width: int) -> QImage:
