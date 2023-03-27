@@ -43,8 +43,9 @@ class PlayButton(QPushButton):
 class FaceData(QListWidget):
     css_style: str = """
     FaceData {
-        font: 12pt Roboto; 
-        font-weight: bold; 
+        font: 10pt Roboto;
+        font-weight: bold;
+        color: #555555;
         background-color: #D8D7DA; 
         border: 2px solid lightgray; 
         border-radius: 10;
