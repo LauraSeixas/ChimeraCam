@@ -1,15 +1,10 @@
-from sys import path
-from os.path import dirname
-path.append(dirname(dirname(__file__)))
 import cv2
 import numpy as np
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QImage
 from face_track import FaceTrack
 
-face_track = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
-
-Matrix = np.ndarray[int, np.dtype[np.generic]]
+Mat = np.ndarray[int, np.dtype[np.generic]]
 
 class VideoFaceTrack(QThread):
     image_signal: pyqtSignal = pyqtSignal(QImage)
@@ -17,13 +12,14 @@ class VideoFaceTrack(QThread):
 
     def __init__(self, widgets_width: int) -> None:
         super().__init__()
-        # LARGURA DO VÍDEO
         self.video_width: int = widgets_width
+        self.face_track = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
 
     def run(self) -> None:
         self.thread_running: bool = True
         try: 
             snapshotting = cv2.VideoCapture(0)
+            #snapshotting.open("https://10.0.0.104:8080/video")
         except Exception:
             print(Exception)
             self.thread_running = False
@@ -31,9 +27,9 @@ class VideoFaceTrack(QThread):
             while self.thread_running:
                 ret, frame = snapshotting.read()                
                 if ret:
-                    frame: np.ndarray = self.set_new_frame_shape(frame, self.video_width)
-                    cv2_image: Matrix = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    cv2_tracked_image, face_data = face_track.process_img(cv2_image)
+                    square_frame: np.ndarray = self.set_square_shape_frame(frame)
+                    cv2_image: Mat = cv2.cvtColor(square_frame, cv2.COLOR_BGR2RGB)
+                    cv2_tracked_image, face_data = self.face_track.process_img(cv2_image)
                     qt_image: QImage = self.qt_image_generator(cv2_tracked_image, self.video_width)
                     tracked_face_data: list = self.face_data_modeler(face_data)
                     self.emit_signals(qt_image, tracked_face_data)
@@ -43,14 +39,19 @@ class VideoFaceTrack(QThread):
     def stop(self) -> None:
         self.thread_running = False
         self.quit()
-
-    def set_new_frame_shape(self, frame: np.ndarray, video_width: int) -> np.ndarray:
-        start: int = int(np.shape(frame)[1]/2 - video_width*2/3)
-        end: int = int(np.shape(frame)[1]/2 + video_width*2/3)
-        new_frame: np.ndarray = frame[:, start:end, :]
+    
+    def set_square_shape_frame(self, frame: np.ndarray) -> np.ndarray:
+        if np.shape(frame)[0] < np.shape(frame)[1]:
+            start: int = (np.shape(frame)[1] - np.shape(frame)[0]) // 2
+            end: int = np.shape(frame)[1] - start
+            new_frame: np.ndarray = frame[:, start:end, :]
+        else:
+            start = (np.shape(frame)[0] - np.shape(frame)[1]) // 2
+            end = np.shape(frame)[0] - start
+            new_frame = frame[start:end, :, :]
         return new_frame
     
-    def qt_image_generator(self, tracked_image: Matrix, video_width: int) -> QImage:
+    def qt_image_generator(self, tracked_image: Mat, video_width: int) -> QImage:
         qt_image: QImage = QImage(tracked_image.data, tracked_image.shape[1], tracked_image.shape[0], QImage.Format_RGB888)
         return qt_image.scaled(video_width, video_width, Qt.KeepAspectRatio)
     
@@ -58,20 +59,8 @@ class VideoFaceTrack(QThread):
         if len(face_data) > 0:
             face_data_list: list = []
             for item in face_data:
-                age: str = item["age"].replace("(","").replace(")","").replace("-","")
-                match len(age):
-                    case 2:
-                        age: str = f"{age[0:1]} a {age[1:2]}"
-                    case 3:
-                        age: str = f"{age[0:1]} a {age[1:3]}"
-                    case 4:
-                        age: str = f"{age[0:2]} a {age[2:4]}"
-                    case 5:
-                        age: str = f"{age[0:2]} a {age[2:5]}"
-                    case _:
-                        pass
-                face_data_str: str = f"Anônimo, idade aprox. {age} anos"
-                face_data_list.append(face_data_str)
+                age: str = item["age"].replace("(","").replace(")","").replace("-"," a ")
+                face_data_list.append(f"Anônimo, idade aprox. {age} anos")
             return face_data_list
         else:
             return ["Nenhuma pessoa detectada"]
