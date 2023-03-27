@@ -1,6 +1,3 @@
-from sys import path
-from os.path import dirname
-path.append(dirname(dirname(__file__)))
 import cv2
 import numpy as np
 from PyQt5.QtCore import QThread, pyqtSignal, Qt

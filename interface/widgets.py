@@ -11,6 +11,7 @@ class Screen(QLabel):
     css_style: str = """
     Screen {
         background-color: #2E2A2A;
+        padding: 2 2
     }
     """
     def __init__(self, widgets_width: int):
@@ -42,30 +43,36 @@ class PlayButton(QPushButton):
 class FaceData(QListWidget):
     css_style: str = """
     FaceData {
-        font: 12pt Arial; 
+        font: 12pt Roboto; 
         font-weight: bold; 
-        background-color: white; 
+        background-color: #D8D7DA; 
         border: 2px solid lightgray; 
-        border-radius: 10px
+        border-radius: 10;
+        margin: 0 10;
     }
     """
     def __init__(self, widgets_width: int):
         super().__init__()
-        self.setFixedSize(widgets_width, 150)
+        self.setFixedSize(widgets_width, 130)
         self.setStyleSheet(self.css_style)
 
 class ActionButton(QPushButton):
-    css_style = """
+    css_style: str = """
     ActionButton {
         color: #FFFFFF;
+        font: 9pt Roboto;
         font-weight: bold;
         background-color: bgcolor;
         border-radius: 10px;
         border: 1px solid #FFFFFF;
+        margin: 15 10 5;
     }
     """
     def __init__(self, btn_name: str, bg_color: str):
         super().__init__()
+        if btn_name != "ALARME":
+            self.css_style = self.css_style.replace("margin: 15 10 5;", "")
+        
         self.setText(btn_name)
         self.setStyleSheet(self.css_style.replace("bgcolor", bg_color))
 
@@ -83,6 +90,7 @@ class ActionbuttonWidget(QWidget):
         self.action_btn_layout.addWidget(first_button)
         self.action_btn_layout.addWidget(second_button)
         self.action_btn_layout.setSpacing(30)
+        self.action_btn_layout.setContentsMargins(10, 15, 10, 0)
         self.setLayout(self.action_btn_layout)
 
 class Body(QWidget):
