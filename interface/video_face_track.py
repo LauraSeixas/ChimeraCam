@@ -60,7 +60,7 @@ class VideoFaceTrack(QThread):
             face_data_list: list = []
             for item in face_data:
                 age: str = item["age"].replace("(","").replace(")","").replace("-"," a ")
-                face_data_list.append(f"Anônimo, idade aprox. {age} anos")
+                face_data_list.append(f"Não identificado, idade aprox. {age} anos")
             return face_data_list
         else:
             return ["Nenhuma pessoa detectada"]

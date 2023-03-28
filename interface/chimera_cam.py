@@ -8,6 +8,7 @@ class ChimeraCam(UserInterface):
 
         self.setWindowTitle(self.window_name)
         self.setCentralWidget(self.body)
+        self.setObjectName("Body")
         self.setStyleSheet(self.body.css_style)
         self.move(500, 0)
 
