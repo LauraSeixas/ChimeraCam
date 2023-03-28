@@ -47,10 +47,33 @@ class FaceData(QListWidget):
         font-weight: bold;
         color: #555555;
         background-color: #D8D7DA; 
-        border: 2px solid lightgray; 
         border-radius: 10;
         margin: 0 10;
+        padding: 10 3 3 10;
     }
+
+    QScrollBar:vertical {              
+        border: none;
+        background: #FFFFFF;
+        width: 10;
+        margin: 0 0 0 0;
+    }
+    QScrollBar::handle:vertical {
+        background: #3E3A3A;
+        min-height: 20;
+    }
+
+    QScrollBar:horizontal {              
+        border: none;
+        background: #FFFFFF;
+        height: 10;
+        margin: 0 0 0 0;
+    }
+    QScrollBar::handle:horizontal {
+        background: #3E3A3A;
+        min-width: 20;
+    }
+    
     """
     def __init__(self, widgets_width: int):
         super().__init__()
@@ -66,6 +89,7 @@ class ActionButton(QPushButton):
         background-color: bgcolor;
         border-radius: 10px;
         border: 1px solid #FFFFFF;
+        padding: 10 10;
         margin: 15 10 5;
     }
     """
@@ -96,8 +120,8 @@ class ActionbuttonWidget(QWidget):
 
 class Body(QWidget):
     css_style: str = """
-    QWidget {
-        padding: 10px 10px;
+    QWidget#Body {
+        padding: 10 10;
         background-color: #3E3A3A;
     }
     """
