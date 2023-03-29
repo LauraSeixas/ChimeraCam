@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from imgProcess import FaceTrack
 
-chimera = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
+chimera = FaceTrack()
 video = cv2.VideoCapture(0)
 
 while True:

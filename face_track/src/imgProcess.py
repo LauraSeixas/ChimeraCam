@@ -9,7 +9,11 @@ class FaceTrack:
            '(25-32)', '(38-43)', '(48-53)', '(60-100)']
     _model_mean = (78.4263377603, 83.7689143744, 114.895847746)
 
-    def __init__(self, age_config, age_weights):
+    def __init__(
+                self, 
+                age_config = 'age_net.caffemodel',
+                age_weights = 'age_deploy.prototxt'
+            ):
         age_model_src = f"{dirname(dirname(__file__))}/models/"
 
         age_config = age_model_src + age_config
