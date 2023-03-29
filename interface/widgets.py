@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QListWidget
+from PyQt5.QtWidgets import QMessageBox
 
 __all__ = ["Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "Body"]
 
@@ -92,13 +93,48 @@ class ActionButton(QPushButton):
         margin: 15 10 5;
     }
     """
-    def __init__(self, btn_name: str, bg_color: str):
+    def __init__(self, btn_name: str, bg_color: str, message_str: str = ""):
         super().__init__()
         if btn_name != "ALARME":
             self.css_style = self.css_style.replace("margin: 15 10 5;", "")
         
         self.setText(btn_name)
         self.setStyleSheet(self.css_style.replace("bgcolor", bg_color))
+        self.message = message_str
+        self.clicked.connect(self.button_clicked)
+    
+    def button_clicked(self):
+       if self.message:
+            msg = MessageBox(self.message)
+            msg.exec()
+
+class MessageBox(QMessageBox):
+    css_style: str = """
+    QMessageBox {
+        background-color: #2E2A2A;
+    }
+
+    QMessageBox QLabel {
+        color: #FFFFFF;
+        font: 9pt Roboto;
+        font-weight: bold;
+    }
+
+    QMessageBox QPushButton {
+        color: #FFFFFF;
+        font: 9pt Roboto;
+        font-weight: bold;
+        background-color: #3F95D3;
+        border-radius: 10px;
+        padding: 10 10;
+        margin: 15 10 5;
+    }
+    """
+    def __init__(self, message: str = ""):
+        super().__init__()
+        self.setText(message)
+        self.setIcon(QMessageBox.Warning)
+        self.setStyleSheet(self.css_style)
 
 class PlaybuttonWidget(QWidget):
     def __init__(self, play_button: PlayButton):
