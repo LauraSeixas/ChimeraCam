@@ -13,7 +13,7 @@ class VideoFaceTrack(QThread):
     def __init__(self, widgets_width: int) -> None:
         super().__init__()
         self.video_width: int = widgets_width
-        self.face_track = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
+        self.face_track = FaceTrack()
 
     def run(self) -> None:
         self.thread_running: bool = True
@@ -59,8 +59,9 @@ class VideoFaceTrack(QThread):
         if len(face_data) > 0:
             face_data_list: list = []
             for item in face_data:
+                user: str = item["identification"]
                 age: str = item["age"].replace("(","").replace(")","").replace("-"," a ")
-                face_data_list.append(f"Não identificado, idade aprox. {age} anos")
+                face_data_list.append(f"{user}, idade aprox. {age} anos")
             return face_data_list
         else:
             return ["Nenhuma pessoa detectada"]

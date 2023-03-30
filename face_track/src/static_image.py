@@ -8,8 +8,8 @@ import os
 
 chimera = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
 #getting image and transforming
-path = f"{os.path.dirname(os.path.dirname(__file__))}/images/"
-img = cv2.imread(f'{path}/gabi/3.jpeg')
+path = f"{os.path.dirname(os.path.dirname(__file__))}/"
+img = cv2.imread(f'{path}/test_imgs/7.jpeg')
 image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 image, persons = chimera.process_img(image)
 print(persons)
