@@ -6,8 +6,9 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QLineEdit
 
-__all__ = ["Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "Body"]
+__all__ = ["Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "RegistrationModal", "Body"]
 
 class Screen(QLabel):
     css_style: str = """
@@ -98,11 +99,12 @@ class ActionButton(QPushButton):
         super().__init__()
         if btn_name != "ALARME":
             self.css_style = self.css_style.replace("margin: 15 10 5;", "")
-        
+
         self.setText(btn_name)
         self.setStyleSheet(self.css_style.replace("bgcolor", bg_color))
-        self.message = message_str
-        if btn_name != "CADASTRO":
+        
+        if btn_name != "CADASTRO" and btn_name != "INICIAR":
+            self.message = message_str
             self.clicked.connect(self.button_clicked)
     
     def button_clicked(self):
@@ -138,11 +140,41 @@ class MessageBox(QMessageBox):
         self.setIcon(QMessageBox.Warning)
         self.setStyleSheet(self.css_style)
 
-class NameRegistrationBoard(QFrame):
-
-    def __init__(self):
+class RegistrationModal():
+    #css_registration_btn: str = """
+    """ActionButton {
+        color: #FFFFFF;
+        font: 9pt Roboto;
+        font-weight: bold;
+        background-color: "#533FD3";
+        border-radius: 10px;
+        padding: 10 10;
+        margin: 15 10 5;
+    }
+    """
+    def __init__(self, body, registration_btn: ActionButton):
         super().__init__()
-        
+        self.modal = QFrame(body)
+        #self.modal.setMaximumSize(200, 300)
+        self.user_name_input = QLineEdit()        
+        self.registration_btn: ActionButton = registration_btn
+        #self.registration_btn.setStyleSheet(self.css_registration_btn)
+        self.modal_layout = QVBoxLayout()
+        self.modal_layout.addWidget(self.user_name_input)
+        self.modal_layout.addWidget(self.registration_btn)
+        self.modal.setLayout(self.modal_layout)
+        self.modal.setStyleSheet(""" QFrame {background-color: #4E4A4A; border: none;} """)
+        self.modal.setGeometry(75,350, 250,200)
+        self.modal.hide()
+        self.modal_closed = True
+
+    def operate_modal(self):
+        if self.modal_closed:
+            self.modal.show()
+            self.modal_closed = False
+        else:
+            self.modal.hide()
+            self.modal_closed = True
 
 class PlaybuttonWidget(QWidget):
     def __init__(self, play_button: PlayButton):

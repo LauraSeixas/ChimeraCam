@@ -11,7 +11,7 @@ class ChimeraCam(UserInterface):
         self.setCentralWidget(self.body)
         self.setObjectName("Body")
         self.setStyleSheet(self.body.css_style)
-        self.move(500, 0)
+        self.move(750, 100)
 
         self.tracking_running: bool = False
         self.face_tracking: VideoFaceTrack = VideoFaceTrack(self.widgets_width)
@@ -19,8 +19,9 @@ class ChimeraCam(UserInterface):
 
         self.register_running: bool = False
         self.register: Register = Register(self.widgets_width)
-        self.register_button.clicked.connect(self.user_registering)
-        self.register.name = "something"
+        self.register_button.clicked.connect(self.registration_modal.operate_modal)
+        self.registration_button.clicked.connect(self.user_registering)
+        self.register.user_name = "something"
 
     def operate_tracking(self) -> None:
         if not self.tracking_running:
@@ -43,7 +44,9 @@ class ChimeraCam(UserInterface):
     def user_registering(self):
         if self.tracking_running == True:
             self.operate_tracking()
-        
+
+        self.register.user_name = self.registration_modal.user_name_input.text()
+
         if not self.register.thread_running:
             self.register.start()
             self.register.register_signal.connect(self.refresh_video_screen)

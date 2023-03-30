@@ -15,14 +15,14 @@ class Register(QThread):
         super().__init__()
         self.video_width: int = widgets_width
         self.register = FaceTrack()
-        self.name: str = ""
+        self.user_name: str = ""
         self.thread_running: bool = False
 
     def run(self) -> None:
         self.thread_running = True
         try: 
-            if not os.path.exists(f'{_CHIMERACAMPATH}/face_track/images/name'):
-                os.makedirs(f'{_CHIMERACAMPATH}/face_track/images/name')
+            if not os.path.exists(f'{_CHIMERACAMPATH}/face_track/images/{self.user_name}'):
+                os.makedirs(f'{_CHIMERACAMPATH}/face_track/images/{self.user_name}')
             snapshotting = cv2.VideoCapture(0)
         except Exception:
             self.thread_running = False
@@ -44,7 +44,7 @@ class Register(QThread):
                     if count > 5 and (count % (intervalo * fps) == 0 and count_cadastro <= 5):
                         faces = self.register.detect_faces(frame)
                         if faces:
-                            cv2.imwrite(f'{_CHIMERACAMPATH}/face_track/images/name/{count_cadastro}.jpg', frame)
+                            cv2.imwrite(f'{_CHIMERACAMPATH}/face_track/images/{self.user_name}/{count_cadastro}.jpg', frame)
                             print(f'Imagem {count_cadastro} capturada')
                         count_cadastro += 1
                 count += 1
@@ -52,6 +52,7 @@ class Register(QThread):
                     self.stop()
         finally:
             snapshotting.release()
+            self.register.retrain()
 
     def stop(self) -> None:
         self.thread_running = False
