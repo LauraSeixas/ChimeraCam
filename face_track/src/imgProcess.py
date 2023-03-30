@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from keras_facenet import FaceNet
 import pickle
+from typing import Dict, List, Tuple
 
 class FaceTrack:
     _ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)',
@@ -13,9 +14,9 @@ class FaceTrack:
 
     def __init__(
                 self,
-                age_config = 'age_net.caffemodel',
-                age_weights = 'age_deploy.prototxt'
-            ):
+                age_config : str = 'age_net.caffemodel',
+                age_weights : str = 'age_deploy.prototxt'
+            ) -> None:
         model_src = f"{self.BASE_DIR}/models/"
 
         age_config = model_src + age_config
@@ -27,7 +28,7 @@ class FaceTrack:
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.recognizer.read(f"{model_src}/trainner.yml")
 
-    def retrain(self):
+    def retrain(self) -> None:
         ### Need to install pip install opencv-contrib-python
         image_dir = os.path.join(self.BASE_DIR, "images")
         current_id = 0
@@ -57,12 +58,12 @@ class FaceTrack:
                         current_id += 1
                     
                     id_ = label_ids[label]
-                    # pil_image = Image.open(path).convert("L")
                     img = cv2.imread(path)
 
                     ###################################################################
                     #### here is using pill, and recising, but i get some error in the model
                     # the normalized size to the images being processed
+                    # pil_image = Image.open(path).convert("L")
                     # base_size = (550, 550)
                     # resizing image
                     # final_image = pil_image.resize(base_size, Image.ANTIALIAS)
@@ -86,7 +87,7 @@ class FaceTrack:
         self.recognizer.train(x_train, np.array(y_labels))
         self.recognizer.save(f"{models_dir}/trainner.yml")
 
-    def registration(self, name):
+    def registration(self, name : str) -> None:
         # Criar a pasta "imagens com o nome da pessoa que está se cadastrando" se ela não existir
         if not os.path.exists(f'{self.BASE_DIR}/images/{name}'):
             os.makedirs(f'{self.BASE_DIR}/images/{name}')
@@ -137,20 +138,20 @@ class FaceTrack:
         self.retrain()
 
 
-    def get_labels(self):
+    def get_labels(self) -> Dict[int, str]:
         with open(f"{self.BASE_DIR}/models/labels.pickle", 'rb') as f:
             og_labels = pickle.load(f)
             ## reverting the labels to be id: label, instead of label:id
             labels = {v:k for k,v in og_labels.items()}
             return labels
 
-    def detect_faces(self,img):
+    def detect_faces(self,img : np.ndarray) -> List[Dict]:
         converted_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         faces = self.face_model.extract(converted_img, threshold=0.8)
 
         return faces
     
-    def detect_age(self, face):
+    def detect_age(self, face : np.ndarray) -> str:
         blob = cv2.dnn.blobFromImage(
             face, 1.0, (227, 227), self._model_mean, swapRB=False
         )
@@ -159,7 +160,7 @@ class FaceTrack:
         age = self._ageList[age_preds[0].argmax()]
         return age
     
-    def recognize_face(self, face):
+    def recognize_face(self, face : np.ndarray) -> str:
         roi_gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
         id_, conf = self.recognizer.predict(roi_gray)
         if conf > 0.6:
@@ -167,7 +168,7 @@ class FaceTrack:
         else:
             return "desconhecido"
     
-    def process_img(self, img):
+    def process_img(self, img : np.ndarray) -> Tuple[np.ndarray, List[Dict]]:
         faces = self.detect_faces(img)
         persons = []
         for face in faces:
@@ -175,11 +176,11 @@ class FaceTrack:
             if face['confidence'] > 0.9:
                 print(face['confidence'])
                 cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-            face = img[y:y+h, x:x+w]
+            roi = img[y:y+h, x:x+w]
             
-            identification = self.recognize_face(face)
+            identification = self.recognize_face(roi)
             print(identification)
-            age = self.detect_age(face)
+            age = self.detect_age(roi)
             credentials = {
                 "face" : [x,y,w,h],
                 "age" : age,
