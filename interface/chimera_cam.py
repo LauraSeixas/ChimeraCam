@@ -2,6 +2,7 @@ from PyQt5.QtGui import QImage, QPixmap
 from .user_interface import UserInterface
 from .video_face_track import VideoFaceTrack
 from .register import Register
+from .widgets import Screen
 
 class ChimeraCam(UserInterface):
     def __init__(self, window_width: int):
@@ -17,12 +18,12 @@ class ChimeraCam(UserInterface):
         self.face_tracking: VideoFaceTrack = VideoFaceTrack(self.widgets_width)
         self.play_button.clicked.connect(self.operate_tracking)
 
-        self.register_running: bool = False
         self.register: Register = Register(self.widgets_width)
-        self.register_button.clicked.connect(self.registration_modal.operate_modal)
-        self.registration_button.clicked.connect(self.user_registering)
-        self.register.user_name = "something"
-
+        self.register.screen: Screen = self.video_screen
+        self.registration_modal.operate_face_track = self.operate_tracking
+        self.registration_modal_button.clicked.connect(self.registration_modal.operate_registration_modal)
+        self.registration_start_button.clicked.connect(self.user_registering)
+        
     def operate_tracking(self) -> None:
         if not self.tracking_running:
             self.tracking_running = True
@@ -31,6 +32,7 @@ class ChimeraCam(UserInterface):
             self.face_tracking.face_data_signal.connect(self.refresh_face_data_list)
             self.play_button.setText(self.play_button.stop)
             self.play_button.setStyleSheet(self.play_button.stop_style)
+            self.registration_modal.face_track_running: bool = self.tracking_running
         else:
             self.tracking_running = False
             self.face_tracking.stop()
@@ -40,22 +42,18 @@ class ChimeraCam(UserInterface):
             self.play_button.setStyleSheet(self.play_button.play_style)
             self.video_screen.setPixmap(QPixmap(None))
             self.face_data_list.clear()
+            self.registration_modal.face_track_running = self.tracking_running
 
     def user_registering(self):
-        if self.tracking_running == True:
-            self.operate_tracking()
-
         self.register.user_name = self.registration_modal.user_name_input.text()
+        if len(self.register.user_name) < 3:
+            self.registration_modal.info_label.setText(self.registration_modal.info_text_3)
+            return
 
         if not self.register.thread_running:
+            self.registration_modal.info_label.setText(self.registration_modal.info_text_2)
             self.register.start()
             self.register.register_signal.connect(self.refresh_video_screen)
-        else:
-            #self.register_running = False
-            self.video_screen.setPixmap(QPixmap.fromImage(None))
-        """ self.register.stop()
-            self.register.register_signal.disconnect()
-            self.video_screen.setPixmap(QPixmap(None)) """
         
     def refresh_video_screen(self, image: QImage) -> None:
         self.video_screen.setPixmap(QPixmap.fromImage(image))

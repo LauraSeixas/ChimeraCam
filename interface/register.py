@@ -2,8 +2,9 @@ import os
 import cv2
 import numpy as np
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
-from PyQt5.QtGui import QImage
+from PyQt5.QtGui import QImage, QPixmap
 from face_track import FaceTrack
+from .widgets import Screen
 
 _CHIMERACAMPATH = os.path.dirname(os.path.dirname(__file__))
 Mat = np.ndarray[int, np.dtype[np.generic]]
@@ -15,8 +16,9 @@ class Register(QThread):
         super().__init__()
         self.video_width: int = widgets_width
         self.register = FaceTrack()
-        self.user_name: str = ""
+        self.user_name: str
         self.thread_running: bool = False
+        self.screen: Screen 
 
     def run(self) -> None:
         self.thread_running = True
@@ -56,10 +58,7 @@ class Register(QThread):
 
     def stop(self) -> None:
         self.thread_running = False
-        white = np.full((1000, 1000, 3), 50, dtype = np.uint8)
-        cv2image: Mat = cv2.cvtColor(white, cv2.COLOR_BGR2RGB)
-        qtimage: QImage = self.qt_image_generator(cv2image, self.video_width)
-        self.register_signal.emit(qtimage)
+        self.screen.setPixmap(QPixmap(None))
         self.register_signal.disconnect()
         self.quit()
         

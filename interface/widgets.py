@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtWidgets import QLineEdit
+from PyQt5 import QtCore
 
 __all__ = ["Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "RegistrationModal", "Body"]
 
@@ -141,38 +142,53 @@ class MessageBox(QMessageBox):
         self.setStyleSheet(self.css_style)
 
 class RegistrationModal():
-    #css_registration_btn: str = """
-    """ActionButton {
-        color: #FFFFFF;
-        font: 9pt Roboto;
-        font-weight: bold;
-        background-color: "#533FD3";
-        border-radius: 10px;
-        padding: 10 10;
-        margin: 15 10 5;
-    }
-    """
+    info_text_1: str = "Informe seu nome e \ninicie a identificação"
+    info_text_2: str = "Mova seu rosto a\ncada 2 segundos"
+    info_text_3: str = "Informe um nome com\n3 ou mais caracteres"
+    info_label_css: str = "QLabel {font: 11pt Roboto; font-weight: bold; color: #D8D7DA}"
+    user_name_css: str = "QLineEdit {font: 11pt Roboto; font-weight: bold; padding: 0 10; background-color: #D8D7DA}"
+    modal_css: str = "QFrame {background-color: #4E4A4A; border: none;}"
+
     def __init__(self, body, registration_btn: ActionButton):
         super().__init__()
-        self.modal = QFrame(body)
-        #self.modal.setMaximumSize(200, 300)
-        self.user_name_input = QLineEdit()        
+        self.face_track_running: bool = False
+        self.operate_face_track = ""
+
+        self.info_label = QLabel()
+        self.info_label.setFixedSize(220, 50)
+        self.info_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.info_label.setStyleSheet(self.info_label_css)
+        self.info_label.setContentsMargins(0, 0, 0, 0)
+
+        self.user_name_input = QLineEdit()
+        self.user_name_input.setFixedSize(220, 40)
+        self.user_name_input.setStyleSheet(self.user_name_css)
+
         self.registration_btn: ActionButton = registration_btn
-        #self.registration_btn.setStyleSheet(self.css_registration_btn)
+
         self.modal_layout = QVBoxLayout()
+        self.modal_layout.addWidget(self.info_label)
         self.modal_layout.addWidget(self.user_name_input)
         self.modal_layout.addWidget(self.registration_btn)
+        self.modal_layout.setSpacing(0)
+        self.modal_layout.setContentsMargins(30, 0, 30, 0)
+
+        self.modal = QFrame(body)
         self.modal.setLayout(self.modal_layout)
-        self.modal.setStyleSheet(""" QFrame {background-color: #4E4A4A; border: none;} """)
-        self.modal.setGeometry(75,350, 250,200)
+        self.modal.setStyleSheet(self.modal_css)
+        self.modal.setGeometry(60,350, 280,200)
         self.modal.hide()
         self.modal_closed = True
 
-    def operate_modal(self):
+    def operate_registration_modal(self):
+        if self.face_track_running == True:
+                self.operate_face_track()
         if self.modal_closed:
+            self.info_label.setText(self.info_text_1)
             self.modal.show()
             self.modal_closed = False
         else:
+            self.user_name_input.clear()
             self.modal.hide()
             self.modal_closed = True
 
