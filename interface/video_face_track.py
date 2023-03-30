@@ -13,7 +13,7 @@ class VideoFaceTrack(QThread):
     def __init__(self, widgets_width: int) -> None:
         super().__init__()
         self.video_width: int = widgets_width
-        self.face_track = FaceTrack('age_net.caffemodel', 'age_deploy.prototxt')
+        self.face_track = FaceTrack()
 
     def run(self) -> None:
         self.thread_running: bool = True

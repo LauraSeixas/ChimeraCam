@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QFrame
 
 __all__ = ["Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "Body"]
 
@@ -101,7 +102,8 @@ class ActionButton(QPushButton):
         self.setText(btn_name)
         self.setStyleSheet(self.css_style.replace("bgcolor", bg_color))
         self.message = message_str
-        self.clicked.connect(self.button_clicked)
+        if btn_name != "CADASTRO":
+            self.clicked.connect(self.button_clicked)
     
     def button_clicked(self):
        if self.message:
@@ -135,6 +137,12 @@ class MessageBox(QMessageBox):
         self.setText(message)
         self.setIcon(QMessageBox.Warning)
         self.setStyleSheet(self.css_style)
+
+class NameRegistrationBoard(QFrame):
+
+    def __init__(self):
+        super().__init__()
+        
 
 class PlaybuttonWidget(QWidget):
     def __init__(self, play_button: PlayButton):
