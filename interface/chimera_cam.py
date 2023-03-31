@@ -48,7 +48,7 @@ class ChimeraCam(UserInterface):
             self.registration_modal.face_track_running = self.tracking_running
 
     def user_registering(self):
-        self.register.user_name = self.registration_modal.user_name_input.text()
+        self.register.user_name = self.registration_modal.user_name_input.text() 
         self.registration_modal.modal.hide()
         self.registration_modalmodal_closed = True
         if len(self.register.user_name) < 3:
