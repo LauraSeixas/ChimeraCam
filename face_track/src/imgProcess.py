@@ -162,7 +162,7 @@ class FaceTrack:
     def recognize_face(self, face : np.ndarray) -> str:
         roi_gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
         id_, conf = self.recognizer.predict(roi_gray)
-        if conf > 0.6:
+        if conf < 100:
             return self.labels[id_]
         else:
             return "desconhecido"
