@@ -49,6 +49,8 @@ class ChimeraCam(UserInterface):
 
     def user_registering(self):
         self.register.user_name = self.registration_modal.user_name_input.text()
+        self.registration_modal.modal.hide()
+        self.registration_modalmodal_closed = True
         if len(self.register.user_name) < 3:
             self.registration_modal.info_label.setText(self.registration_modal.info_text_3)
             return
