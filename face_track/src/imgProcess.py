@@ -58,6 +58,12 @@ class FaceTrack:
                     
                     id_ = label_ids[label]
                     img = cv2.imread(path)
+                    target_width = 550
+                    height, width, _ = img.shape
+                    ratio = width / height
+
+                    target_height = int(target_width / ratio)
+                    img = cv2.resize(img, (target_width, target_height))
 
                     ###################################################################
                     #### here is using pill, and recising, but i get some error in the model
@@ -162,7 +168,7 @@ class FaceTrack:
     def recognize_face(self, face : np.ndarray) -> str:
         roi_gray = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
         id_, conf = self.recognizer.predict(roi_gray)
-        if conf > 0.6:
+        if conf < 100:
             return self.labels[id_]
         else:
             return "desconhecido"
