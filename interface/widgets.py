@@ -9,7 +9,33 @@ from PyQt5.QtWidgets import QFrame
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5 import QtCore
 
-__all__ = ["Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "RegistrationModal", "Body"]
+__all__ = ["ChildAlert", "Screen", "PlayButton", "FaceData", "ActionButton", "PlaybuttonWidget", "ActionbuttonWidget", "RegistrationModal", "Body"]
+
+class ChildAlert(QLabel):
+    css_style_red = """
+        ChildAlert {
+            background-color: #2E2A2A;
+            font: 11pt Roboto;
+            font-weight: bold;
+            color: red;
+        }
+    """
+    css_style_green = """
+        ChildAlert {
+            background-color: #2E2A2A;
+            font: 11pt Roboto;
+            font-weight: bold;
+            color: lightgreen;
+        }
+    """
+    detected: str = "Criança detecatada!"
+    not_detected: str = "Nenhuma criança detecatada!"
+    def __init__(self, widgets_width):
+        super().__init__()
+        self.setFixedSize(widgets_width, 30)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        #self.setStyleSheet(self.css_style)
+        self.setContentsMargins(0, 0, 0, 0)
 
 class Screen(QLabel):
     css_style: str = """
@@ -217,7 +243,8 @@ class Body(QWidget):
     }
     """
     def __init__(
-            self, 
+            self,
+            child_alert: ChildAlert,
             screen: Screen,
             play_btn: PlaybuttonWidget,
             face_data: FaceData,
@@ -226,6 +253,7 @@ class Body(QWidget):
             alarm_btn: ActionButton):
         super().__init__()
         self.body_layout: QVBoxLayout = QVBoxLayout()
+        self.body_layout.addWidget(child_alert)
         self.body_layout.addWidget(screen)
         self.body_layout.addWidget(play_btn)
         self.body_layout.addWidget(face_data)

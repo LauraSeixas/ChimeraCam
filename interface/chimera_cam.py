@@ -30,6 +30,7 @@ class ChimeraCam(UserInterface):
             self.face_tracking.start()
             self.face_tracking.image_signal.connect(self.refresh_video_screen)
             self.face_tracking.face_data_signal.connect(self.refresh_face_data_list)
+            self.face_tracking.child_alert.connect(self.refresh_detected_childalert)
             self.play_button.setText(self.play_button.stop)
             self.play_button.setStyleSheet(self.play_button.stop_style)
             self.registration_modal.face_track_running: bool = self.tracking_running
@@ -38,10 +39,12 @@ class ChimeraCam(UserInterface):
             self.face_tracking.stop()
             self.face_tracking.image_signal.disconnect()
             self.face_tracking.face_data_signal.disconnect()
+            self.face_tracking.child_alert.disconnect()
             self.play_button.setText(self.play_button.play)
             self.play_button.setStyleSheet(self.play_button.play_style)
             self.video_screen.setPixmap(QPixmap(None))
             self.face_data_list.clear()
+            self.child_alert_label.setText("")
             self.registration_modal.face_track_running = self.tracking_running
 
     def user_registering(self):
@@ -61,3 +64,10 @@ class ChimeraCam(UserInterface):
     def refresh_face_data_list(self, face_data: list) -> None:
         self.face_data_list.clear()
         self.face_data_list.addItems(face_data)
+    
+    def refresh_detected_childalert(self, alert: str) -> None:
+        if alert == self.child_alert_label.detected:
+            self.child_alert_label.setStyleSheet(self.child_alert_label.css_style_red)
+        else:
+            self.child_alert_label.setStyleSheet(self.child_alert_label.css_style_green)
+        self.child_alert_label.setText(alert)

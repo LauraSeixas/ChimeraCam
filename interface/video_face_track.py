@@ -9,6 +9,7 @@ Mat = np.ndarray[int, np.dtype[np.generic]]
 class VideoFaceTrack(QThread):
     image_signal: pyqtSignal = pyqtSignal(QImage)
     face_data_signal: pyqtSignal = pyqtSignal(list)
+    child_alert: pyqtSignal = pyqtSignal(str)
 
     def __init__(self, widgets_width: int) -> None:
         super().__init__()
@@ -62,6 +63,11 @@ class VideoFaceTrack(QThread):
                 user: str = item["identification"]
                 age: str = item["age"].replace("(","").replace(")","").replace("-"," a ")
                 face_data_list.append(f"{user}, idade aprox. {age} anos")
+
+                if age == "0 a 2" or age == "4 a 6" or age == "8 a 12":
+                    self.child_alert.emit("Criança detecatada!")
+                else:
+                    self.child_alert.emit("Nenhuma criança detecatada!")
             return face_data_list
         else:
             return ["Nenhuma pessoa detectada"]
