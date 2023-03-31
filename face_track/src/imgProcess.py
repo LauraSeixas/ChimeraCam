@@ -10,27 +10,26 @@ class FaceTrack:
     _ageList = ['(0-2)', '(4-6)', '(8-12)', '(15-20)',
            '(25-32)', '(38-43)', '(48-53)', '(60-100)']
     _model_mean = (78.4263377603, 83.7689143744, 114.895847746)
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    models_dir = './face_track/models/'
+    images_dir = './face_track/images/'
 
     def __init__(
                 self,
                 age_config : str = 'age_net.caffemodel',
                 age_weights : str = 'age_deploy.prototxt'
             ) -> None:
-        model_src = f"{self.BASE_DIR}/models/"
 
-        age_config = model_src + age_config
-        age_weights = model_src + age_weights
-
+        age_config = self.models_dir + age_config
+        age_weights = self.models_dir + age_weights
+        trainner = self.models_dir + "trainner.yml"
         self.age_model = cv2.dnn.readNet(age_config, age_weights)
         self.face_model = FaceNet()
         self.labels = self.get_labels()
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
-        self.recognizer.read(f"{model_src}/trainner.yml")
+        self.recognizer.read(trainner)
 
     def retrain(self) -> None:
         ### Need to install pip install opencv-contrib-python
-        image_dir = os.path.join(self.BASE_DIR, "images")
         current_id = 0
 
         ## id labels for the images
@@ -41,7 +40,7 @@ class FaceTrack:
         # Detected faces in gray
         x_train = []
 
-        for root, dirs, files in os.walk(image_dir):
+        for root, dirs, files in os.walk(self.images_dir):
 
             for file in files:
                 print(f'testing {file}')
@@ -80,17 +79,17 @@ class FaceTrack:
                             x_train.append(roi_gray)
                             y_labels.append(id_)
 
-        models_dir = os.path.join(self.BASE_DIR, "models")
-        with open(f"{models_dir}/labels.pickle", "wb") as f:
+        # models_dir = os.path.join(self.BASE_DIR, "models")
+        with open(self.models_dir + "labels.pickle", "wb") as f:
             pickle.dump(label_ids, f)
 
         self.recognizer.train(x_train, np.array(y_labels))
-        self.recognizer.save(f"{models_dir}/trainner.yml")
+        self.recognizer.save( self.models_dir + "trainner.yml")
 
     def registration(self, name : str) -> None:
         # Criar a pasta "imagens com o nome da pessoa que está se cadastrando" se ela não existir
-        if not os.path.exists(f'{self.BASE_DIR}/images/{name}'):
-            os.makedirs(f'{self.BASE_DIR}/images/{name}')
+        if not os.path.exists( self.images_dir + f"images/{name}'"):
+            os.makedirs(self.images_dir + "images/{name}")
         cap = cv2.VideoCapture(0)
 
         # Verificar se a webcam foi aberta corretamente
@@ -115,7 +114,7 @@ class FaceTrack:
 
                 faces = self.detect_faces(frame)
                 if faces:
-                    cv2.imwrite('{}/images/{}/{}.jpg'.format(self.BASE_DIR, name, count_cadastro), frame)
+                    cv2.imwrite('{}{}/{}.jpg'.format(self.images_dir, name, count_cadastro), frame)
                     print('Imagem {} capturada'.format(count_cadastro))
                 count_cadastro += 1
             elif count_cadastro > 5:
@@ -139,7 +138,7 @@ class FaceTrack:
 
 
     def get_labels(self) -> Dict[int, str]:
-        with open(f"{self.BASE_DIR}/models/labels.pickle", 'rb') as f:
+        with open(self.models_dir + "labels.pickle", 'rb') as f:
             og_labels = pickle.load(f)
             ## reverting the labels to be id: label, instead of label:id
             labels = {v:k for k,v in og_labels.items()}
